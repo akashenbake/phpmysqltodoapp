@@ -1,0 +1,29 @@
+.absolute{
+  
+    background-color: dimgray;
+    width:relative;
+    height:relative;
+    top: 0;
+    right: 0;
+    bottom:0;
+    left:0;
+    margin:auto;
+    padding: 20px;
+    
+}
+
+.sign
+{
+    color:white;
+    text-align:center;
+    font-size:30px;
+}
+.c
+{
+  color:dimgray;
+}
+.page-header
+{
+ color: dimgray;
+ text-align: center;
+}

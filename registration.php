@@ -137,7 +137,7 @@ function test_input($data) {
  </form> 
 
  <div>
-  <p class="last"> Already have an account? <a class="last" href="registration.php"> login</a></p>
+  <p class="last"> Already have an account? <a class="last" href="login.php"> login</a></p>
 </div>
 
 </div>
