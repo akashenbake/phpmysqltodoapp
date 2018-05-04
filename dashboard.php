@@ -16,6 +16,7 @@
   $tasks = $conn->query($sql);
   $tasknameErr = $dateErr = $descriptionErr = "";
   $taskname = $date = $description = "";
+  $updatetaskname = $updatedate = $updatedescription = ""; 
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["taskname"])) {
@@ -54,6 +55,7 @@
     header("location:dashboard.php");
   }
 
+}
 // Delete todos
   if(isset($_GET['delete'])){
     $deleteId = $_GET['delete'];
@@ -72,7 +74,22 @@
 
     $conn->close(); 
   }
+ // Update todos
+if(isset($_GET['udpateId'])){
+  $message = "inside update";
+  echo "<script type='text/javascript'>alert('$message');</script>";
+ /* $conn = new mysqli($db_servername, $db_username, $db_password, $db_name);
+  // Check connection
+    if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+    } 
+  $taskname = $_post['taskname'];
+  $date = $_post['date'];
+  $description = $_post['description'];
+  $id = $_post['id'];
+  $sql = "UPDATE todos SET taskname='".$taskname."' , date='"$date"' , description=$description WHERE id=$id";*/
 }
+
 function test_input($data) {
   $data = trim($data);
   $data = stripslashes($data);
@@ -149,16 +166,16 @@ function test_input($data) {
   <?php
   while($row = $tasks->fetch_assoc()){
     ?>
-    <tr>
+    <tr id="<?php echo $row['id'];?>">
      <td><span class="c"><?php echo $row["id"] ?></span></td>
-     <td><span class="c"><?php echo  $row["taskname"] ?></span></td>
-     <td><span class="c"><?php echo $row["date"] ?></span></td>
-     <td><span class="c"><?php echo $row["description"] ?></span></td>
+     <td data-target="updatetaskname"><span class="c"><?php echo  $row["taskname"] ?></span></td>
+     <td data-target="updatedate"><span class="c"><?php echo $row["date"] ?></span></td>
+     <td data-target="updatedescription"><span class="c"><?php echo $row["description"] ?></span></td>
      <td>
-       <span class=" btn btn-default glyphicon glyphicon-edit"> Edit</span>
+       <a class=" btn btn-default glyphicon glyphicon-edit" href="#" data-role="update" data-id="<?php echo $row['id'];?>"> Edit</a>
      </td>
      <td>
-       <span class="btn btn-default glyphicon glyphicon-remove">  <a href="dashboard.php?delete=<?php echo $row['id'];?>"></a> Delete </span>
+       <a class="btn btn-default glyphicon glyphicon-remove" href="dashboard.php?delete=<?php echo $row['id'];?>"> Delete </a>
      </td>
    </tr>
    <?php } ?>
@@ -167,5 +184,74 @@ function test_input($data) {
 </div>
 <div class="col-sm-1"></div>
 </div> 
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Update task details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+         <label>Taskname</label>
+         <input type="text" id="updatetaskname" class="form-control" name="updatetaskname">
+        </div>
+        <div class="form-group">
+         <label>Date</label>
+         <input type="date" id="updatedate" class="form-control" name="updatedate">
+        </div>
+        <div class="form-group">
+         <label>Description</label>
+         <input type="text" id="updatedescription" class="form-control" name="updatedescription">
+        </div>
+        <div class="form-group">
+         <input type="hidden" id="updateId" class="form-control" name="updateId">
+        </div>
+      </div>
+      <div class="modal-footer">
+      <a href="#" id="save" type="button" class="btn btn-primary pull-right">Update</a>
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
+<script>
+  $(document).ready(function(){
+    $(document).on('click','a[data-role=update]',function(){
+    var id = $(this).data('id');
+      var taskname = $('#'+id).children('td[data-target=updatetaskname]').text();
+      var date = $('#'+id).children('td[data-target=updatedate]').text();
+      var description = $('#'+id).children('td[data-target=updatedescription]').text();
+      $('#updatetaskname').val(taskname);
+      $('#updatedate').val(date);
+      $('#updateId').val(id);
+      $('#updatedescription').val(description);
+      $('#myModal').modal('toggle');
+
+    })
+  });
+ // Creating event to get data from fields and update in database
+  $('#save').click(function(){
+    var id = $('#updateId').val();
+    var taskname = $('#updatetaskname').val();
+    var date = $('#updatedate').val();
+    var description = $('#updatedescription').val();
+
+    $.ajax({
+      url    : 'update.php' ,
+      method : 'post',
+      data   : { id : id , taskname : taskname , date : date , description : description},
+      success : function(response){
+                 console.log(response);
+      }
+    });
+  });
+</script>
 </html>

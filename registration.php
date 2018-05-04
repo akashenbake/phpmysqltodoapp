@@ -51,13 +51,14 @@
     if($emailExist == true){
        $emailErr="Email already exist";
     }
+  }
     else{
       $message = "email stored";
         echo "<script type='text/javascript'>alert('$message');</script>";
        
       $email = test_input($_POST["email"]);
     }
-  }
+  
    
   $conn->close();
 }
