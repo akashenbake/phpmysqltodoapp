@@ -16,7 +16,6 @@
   $tasks = $conn->query($sql);
   $tasknameErr = $dateErr = $descriptionErr = "";
   $taskname = $date = $description = "";
-  $updatetaskname = $updatedate = $updatedescription = ""; 
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["taskname"])) {
@@ -74,21 +73,7 @@
 
     $conn->close(); 
   }
- // Update todos
-if(isset($_GET['udpateId'])){
-  $message = "inside update";
-  echo "<script type='text/javascript'>alert('$message');</script>";
- /* $conn = new mysqli($db_servername, $db_username, $db_password, $db_name);
-  // Check connection
-    if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-    } 
-  $taskname = $_post['taskname'];
-  $date = $_post['date'];
-  $description = $_post['description'];
-  $id = $_post['id'];
-  $sql = "UPDATE todos SET taskname='".$taskname."' , date='"$date"' , description=$description WHERE id=$id";*/
-}
+
 
 function test_input($data) {
   $data = trim($data);
@@ -120,6 +105,7 @@ function test_input($data) {
    <div class="col-sm-6">
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
       <div class="form-group">
+       <input type="hidden"  class="form-control input-lg" name="taskid" value="<?php echo $id; ?>">
        <input type="text"  class="form-control input-lg"  placeholder="Task Name" name="taskname">
        <span class="error"> <?php echo $tasknameErr;?></span>
        <br>
@@ -187,33 +173,34 @@ function test_input($data) {
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+ <div class="modal-dialog">
 
-    <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Update task details</h4>
       </div>
       <div class="modal-body">
+      <form method="POST" action="update.php">
         <div class="form-group">
          <label>Taskname</label>
-         <input type="text" id="updatetaskname" class="form-control" name="updatetaskname">
+         <input type="text" id="updatetaskname" class="form-control">
         </div>
         <div class="form-group">
          <label>Date</label>
-         <input type="date" id="updatedate" class="form-control" name="updatedate">
+         <input type="date" id="updatedate" class="form-control">
         </div>
         <div class="form-group">
          <label>Description</label>
-         <input type="text" id="updatedescription" class="form-control" name="updatedescription">
+         <input type="text" id="updatedescription" class="form-control">
         </div>
         <div class="form-group">
-         <input type="hidden" id="updateId" class="form-control" name="updateId">
+         <input type="hidden" id="updateId" class="form-control">
         </div>
       </div>
+      </form>
       <div class="modal-footer">
-      <a href="#" id="save" type="button" class="btn btn-primary pull-right">Update</a>
+      <a href="#" id="save" class="btn btn-primary pull-right" data-dismiss="modal">Update</a>
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -243,13 +230,13 @@ function test_input($data) {
     var taskname = $('#updatetaskname').val();
     var date = $('#updatedate').val();
     var description = $('#updatedescription').val();
-
     $.ajax({
       url    : 'update.php' ,
       method : 'post',
       data   : { id : id , taskname : taskname , date : date , description : description},
       success : function(response){
                  console.log(response);
+                 window.location = 'dashboard.php';
       }
     });
   });
